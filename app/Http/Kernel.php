@@ -18,13 +18,14 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [],
-        'api' => [],
+        'api' => ['ensure-api-key', 'throttle:60,1'],
     ];
 
     /**
      * The application's route middleware aliases.
      */
     protected $middlewareAliases = [
-        //
+        'ensure-api-key' => \App\Http\Middleware\EnsureApiKeyIsValid::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
 }
