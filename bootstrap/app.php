@@ -17,7 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'ensure-api-key' => \App\Http\Middleware\EnsureApiKeyIsValid::class,
+        ]);
+
+        $middleware->group('api', ['ensure-api-key', 'throttle:60,1']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

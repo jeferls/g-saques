@@ -1,11 +1,11 @@
 <?php
 
 use Domain\Pagarme\Services\PagarmeService;
-use Domain\Shared\Builders\PaymentGatewayBuilder;
+use Domain\Shared\Builders\ServiceGatewayBuilder;
 use InvalidArgumentException;
 
 test('builds pagarme service from payload', function () {
-    $builder = PaymentGatewayBuilder::fromRequest(['gateway' => 'PAGARME']);
+    $builder = ServiceGatewayBuilder::fromRequest(['gateway' => 'PAGARME']);
 
     $service = $builder->build();
 
@@ -13,5 +13,5 @@ test('builds pagarme service from payload', function () {
 });
 
 test('throws exception for unsupported gateway', function () {
-    PaymentGatewayBuilder::fromRequest(['gateway' => 'UNKNOWN'])->build();
+    ServiceGatewayBuilder::fromRequest(['gateway' => 'UNKNOWN'])->build();
 })->throws(InvalidArgumentException::class);

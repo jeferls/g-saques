@@ -8,7 +8,7 @@ use Domain\Pagarme\Services\PagarmeService;
 use InvalidArgumentException;
 use ValueError;
 
-class PaymentGatewayBuilder
+class ServiceGatewayBuilder
 {
     public function __construct(private PaymentGatewayEnum $gateway)
     {
