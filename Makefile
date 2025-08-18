@@ -1,13 +1,17 @@
+# Variables
+DC=docker compose --file docker-compose.dev.yml 
+
 .PHONY: up down logs migrate
 
 up:
-	docker compose up -d --build
+	$(DC) up -d --build
+	$(DC) exec app composer install
 
 down:
-	docker compose down
+	$(DC) down
 
 logs:
-	docker compose logs -f
+	$(DC) logs -f -n 10
 
 migrate:
 	docker compose exec app php artisan migrate

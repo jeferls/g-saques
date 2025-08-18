@@ -1,0 +1,17 @@
+{
+  "name": "bruno-tests",
+  "version": "1.0.0",
+  "description": "Bruno API tests",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.7.2"
+  },
+  "scripts": {
+    "test:create-account": "bru run Regressao/GreennAdm/CriarConta --env Servidor-4",
+    "test:login": "bru run Regressao/GreennAdm/Login/ --env Servidor-4",
+    "test:products": "bru run Regressao/GreennAdm/Produtos/ --env Servidor-4",
+    "test:offers": "bru run Regressao/GreennAdm/Ofertas/ --env Servidor-4"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,74 @@
+meta {
+  name: CT - 001 - 200 - Transfer Batch
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/transfer/batch
+  body: json
+  auth: inherit
+}
+
+headers {
+  Accept: application/json
+  X-API-Key: {{X-API-Key}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "batch": "teste",
+      "items": [
+          {
+              "gateway": "PAGARME",
+              "amount":" {{amount}}",
+              "recipient_id": "{{recipient_id}}",
+              "idempotency_key": "{{idempotency_key}}"            
+          },
+          {
+              "gateway": "PAGARME",
+              "amount": " {{amount2}}",
+              "recipient_id": "{{recipient_id2}}",
+              "idempotency_key": "{{idempotency_key2}}"            
+          },
+          {
+              "gateway": "PAGARME",
+              "amount": " {{amount3}}",
+              "recipient_id": "{{recipient_id3}}",
+              "idempotency_key": "{{idempotency_key3}}"
+          }
+      ]
+  }
+}
+
+script:pre-request {
+  
+  // --- Gerar dados ---
+  const idempotency_key = bru.interpolate('{{$guid}}');
+  const recipient_id = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount = Math.floor(Math.random() * 100000000);
+  
+  const idempotency_key2 = bru.interpolate('{{$guid}}');
+  const recipient_id2 = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount2 = Math.floor(Math.random() * 100000000);
+  
+  const idempotency_key3 = bru.interpolate('{{$guid}}');
+  const recipient_id3 = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount3 = Math.floor(Math.random() * 100000000);
+  
+  
+  // --- Definir variáveis no Bruno ---
+  bru.setVar("idempotency_key", idempotency_key);
+  bru.setVar("recipient_id", recipient_id);
+  bru.setVar("amount", amount);
+  
+  bru.setVar("idempotency_key2", idempotency_key2);
+  bru.setVar("recipient_id2", recipient_id2);
+  bru.setVar("amount2", amount2);
+  
+  bru.setVar("idempotency_key3", idempotency_key3);
+  bru.setVar("recipient_id3", recipient_id3);
+  bru.setVar("amount3", amount3);
+  
+}

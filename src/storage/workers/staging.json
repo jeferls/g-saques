@@ -1,0 +1,36 @@
+{
+    "apps": [
+        {
+            "name": "_webhook_send",
+            "script": "/var/www/html/src/artisan",
+            "args": [
+                "work",
+                "_webhook_send",
+                "--prefetch=1",
+                "--assure=false",
+                "--onerror=requeue"
+            ],
+            "exec_interpreter": "php",
+            "exec_mode": "fork_mode",
+            "instances": 1,
+            "log_file": "/dev/stdout",
+            "merge_logs": true
+        },
+        {
+            "name": "_transfer_item",
+            "script": "/var/www/html/src/artisan",
+            "args": [
+                "work",
+                "_transfer_item",
+                "--prefetch=1",
+                "--assure=false",
+                "--onerror=requeue"
+            ],
+            "exec_interpreter": "php",
+            "exec_mode": "fork_mode",
+            "instances": 1,
+            "log_file": "/dev/stdout",
+            "merge_logs": true
+        }        
+    ]
+}

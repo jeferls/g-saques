@@ -1,18 +1,19 @@
-# version: '3.8' 
+# version: "3.8"
 
 services:
   app:
     build: .
+    working_dir: /var/www/html/src
     volumes:
       - ./:/var/www/html
-      - vendor:/var/www/html/vendor
+      - vendor:/var/www/html/src/vendor
     depends_on:
       - xgrow-by-greenn-saques-hub-mysql
     networks:
       - greenn-network
 
-  svc-saques-nginx:
-    container_name: svc-saques-nginx
+  xgrow-by-greenn-saques-hub-nginx:
+    container_name: xgrow-by-greenn-saques-hub-nginx
     image: nginx:alpine
     volumes:
       - ./:/var/www/html
@@ -30,42 +31,43 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: saques
+      MYSQL_DATABASE: saques-hub
       MYSQL_USER: appuser
       MYSQL_PASSWORD: secret
     volumes:
-      - saques_back_data:/var/lib/mysql
+      - xgrow-by-greenn-saques-hub_data:/var/lib/mysql
     ports:
       - "3317:3306"
     networks:
       - greenn-network
-  svc-saques-rabbitmq:
-    container_name: svc-saques-rabbitmq
+
+  xgrow-by-greenn-saques-hub-rabbitmq:
+    container_name: xgrow-by-greenn-saques-hub-rabbitmq
     image: rabbitmq:3.10.6-management-alpine
     ports:
       - "15617:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - xgrow-by-greenn-saques-hub-rabbitmqdata:/var/lib/rabbitmq/mnesia/
     networks:
       - greenn-network
-    volumes:
-      - saquesback-rabbitmqdata:/var/lib/rabbitmq/mnesia/
 
   pm2:
     container_name: pm2
     build: .
+    working_dir: /var/www/html/src
     volumes:
       - ./:/var/www/html
-      - vendor:/var/www/html/vendor
+      - vendor:/var/www/html/src/vendor
     depends_on:
       - app
       - xgrow-by-greenn-saques-hub-mysql
-      - svc-saques-rabbitmq
-    command: ["pm2-runtime", "storage/workers/production.json"]
+      - xgrow-by-greenn-saques-hub-rabbitmq
+    command: ["pm2-runtime", "storage/workers/dev.json"]
     networks:
       - greenn-network
-
 
 networks:
   greenn-network:
@@ -73,8 +75,8 @@ networks:
     external: true
 
 volumes:
-  saques_back_data:
+  xgrow-by-greenn-saques-hub_data:
     driver: local
-  saquesback-rabbitmqdata:
+  xgrow-by-greenn-saques-hub-rabbitmqdata:
     driver: local
   vendor:

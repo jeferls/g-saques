@@ -1,0 +1,94 @@
+meta {
+  name: CT - 004 - 200 - Webhook transfer failed
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/webhook
+  body: json
+  auth: inherit
+}
+
+headers {
+  Accept: application/json
+  X-API-Key: {{X-API-Key}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": "hook_RyEKQO789TRpZjv5",
+    "account": {
+      "id": "acc_jZkdN857et650oNv",
+      "name": "Lojinha"
+    },
+    "type": "transfer.failed",
+    "created_at": "2017-06-29T20:23:47",
+    "data": {
+      "id": 65485,
+      "amount": 100,
+      "type": "ted",
+      "status": "failed",
+      "source_type": "recipient",
+      "source_id": "re_cix7pxz6f02ppcv6dn4ckcrcc",
+      "target_type": "bank_account",
+      "target_id": "17346045",
+      "fee": 367,
+      "funding_date": null,
+      "funding_estimated_date": "2017-02-18T02:00:00.000Z",
+      "transaction_id": null,
+      "date_created": "2017-02-17T16:24:20.933Z",
+      "bank_response": null,
+      "bank_account": {
+        "object": "bank_account",
+        "id": 17346045,
+        "bank_code": "000",
+        "agencia": "00000",
+        "agencia_dv": "2",
+        "conta": "00000",
+        "conta_dv": "00",
+        "type": "conta_corrente",
+        "document_type": "cpf",
+        "document_number": "03602396681",
+        "legal_name": "nome2",
+        "charge_transfer_fees": true,
+        "date_created": "2016-12-27T22:08:10.536Z"
+      },
+      "metadata": {
+        "idProduto": "13933139"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  
+  // --- Gerar dados ---
+  const idempotency_key = bru.interpolate('{{$guid}}');
+  const recipient_id = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount = Math.floor(Math.random() * 100000000);
+  
+  const idempotency_key2 = bru.interpolate('{{$guid}}');
+  const recipient_id2 = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount2 = Math.floor(Math.random() * 100000000);
+  
+  const idempotency_key3 = bru.interpolate('{{$guid}}');
+  const recipient_id3 = `re_${bru.interpolate('{{$guid}}').replace(/-/g, '').slice(0, 16)}`;
+  const amount3 = Math.floor(Math.random() * 100000000);
+  
+  
+  // --- Definir variáveis no Bruno ---
+  bru.setVar("idempotency_key", idempotency_key);
+  bru.setVar("recipient_id", recipient_id);
+  bru.setVar("amount", amount);
+  
+  bru.setVar("idempotency_key2", idempotency_key2);
+  bru.setVar("recipient_id2", recipient_id2);
+  bru.setVar("amount2", amount2);
+  
+  bru.setVar("idempotency_key3", idempotency_key3);
+  bru.setVar("recipient_id3", recipient_id3);
+  bru.setVar("amount3", amount3);
+  
+}

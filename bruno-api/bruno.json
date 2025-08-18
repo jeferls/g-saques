@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "XGrow-By-Greenn-Saques-Hub",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
