@@ -2,7 +2,6 @@
 
 use App\Models\Transfer;
 use Domain\Shared\Repositories\BaseRepository;
-use Mockery;
 use Tests\TestCase;
 
 class StubRepository extends BaseRepository
@@ -12,13 +11,15 @@ class StubRepository extends BaseRepository
 
 uses(TestCase::class);
 
-afterEach(function () {
-    Mockery::close();
-});
-
 it('delegates findById to findOne', function () {
-    $repo = Mockery::mock(StubRepository::class)->makePartial();
-    $repo->shouldReceive('findOne')->with(['id' => 5])->andReturn(['id' => 5]);
+    $repo = $this->getMockBuilder(StubRepository::class)
+        ->onlyMethods(['findOne'])
+        ->getMock();
+
+    $repo->expects($this->once())
+        ->method('findOne')
+        ->with(['id' => 5])
+        ->willReturn(['id' => 5]);
 
     $result = $repo->findById(5);
     expect($result)->toBe(['id' => 5]);
