@@ -3,14 +3,9 @@
 use Domain\Webhooks\Repositories\WebhookRepository;
 use Domain\Webhooks\Services\WebhookService;
 use Illuminate\Support\Facades\Http;
-use Mockery;
 use Tests\TestCase;
 
 uses(TestCase::class);
-
-afterEach(function () {
-    Mockery::close();
-});
 
 it('sends webhook and updates repository', function () {
     Http::fake([
@@ -24,11 +19,17 @@ it('sends webhook and updates repository', function () {
         'attempts' => 3,
     ];
 
-    $repository = Mockery::mock(WebhookRepository::class);
-    $repository->shouldReceive('findById')->with(1)->andReturn($webhook);
-    $repository->shouldReceive('update')->with(1, Mockery::on(function ($data) {
-        return $data['status'] === 'sent' && $data['response_status'] === 200;
-    }))->andReturn(array_merge($webhook, ['status' => 'sent', 'response_status' => 200]));
+    $repository = $this->createMock(WebhookRepository::class);
+    $repository->expects($this->once())
+        ->method('findById')
+        ->with(1)
+        ->willReturn($webhook);
+    $repository->expects($this->once())
+        ->method('update')
+        ->with(1, $this->callback(function ($data) {
+            return $data['status'] === 'sent' && $data['response_status'] === 200;
+        }))
+        ->willReturn(array_merge($webhook, ['status' => 'sent', 'response_status' => 200]));
 
     $service = new WebhookService($repository);
     $service->send(['id' => 1], true);

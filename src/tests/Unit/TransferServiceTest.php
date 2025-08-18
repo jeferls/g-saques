@@ -2,17 +2,14 @@
 
 use Domain\Transfers\Contracts\TransferRepositoryContract;
 use Domain\Transfers\Services\TransferService;
-use Mockery;
-
-// Ensure Mockery expectations are verified and mocks are cleaned up
-afterEach(function () {
-    Mockery::close();
-});
 
 it('returns null when transfer to update does not exist', function () {
-    $repository = Mockery::mock(TransferRepositoryContract::class);
-    $repository->shouldReceive('findById')->with(1)->andReturn(null);
-    $repository->shouldNotReceive('update');
+    $repository = $this->createMock(TransferRepositoryContract::class);
+    $repository->expects($this->once())
+        ->method('findById')
+        ->with(1)
+        ->willReturn(null);
+    $repository->expects($this->never())->method('update');
 
     $service = new TransferService($repository);
 
@@ -22,45 +19,52 @@ it('returns null when transfer to update does not exist', function () {
 });
 
 it('updates and returns transfer when record exists', function () {
-    $repository = Mockery::mock(TransferRepositoryContract::class);
-    $repository->shouldReceive('findById')->with(1)->andReturn([
+    $repository = $this->createMock(TransferRepositoryContract::class);
+    $existing = [
         'id' => 1,
         'transfer_id' => 123,
         'amount' => 100,
-    ]);
-    $repository->shouldReceive('update')->with(1, ['amount' => 200])->andReturn([
+    ];
+    $updated = [
         'id' => 1,
         'transfer_id' => 123,
         'amount' => 200,
-    ]);
+    ];
+
+    $repository->expects($this->once())
+        ->method('findById')
+        ->with(1)
+        ->willReturn($existing);
+
+    $repository->expects($this->once())
+        ->method('update')
+        ->with(1, ['amount' => 200])
+        ->willReturn($updated);
 
     $service = new TransferService($repository);
 
     $result = $service->updateTransfer(1, ['amount' => 200]);
 
-    expect($result)->toBe([
-        'id' => 1,
-        'transfer_id' => 123,
-        'amount' => 200,
-    ]);
+    expect($result)->toBe($updated);
 });
 
 it('retrieves a transfer by transfer id', function () {
-    $repository = Mockery::mock(TransferRepositoryContract::class);
-    $repository->shouldReceive('findOne')->with(['transfer_id' => 123])->andReturn([
+    $repository = $this->createMock(TransferRepositoryContract::class);
+    $transfer = [
         'id' => 1,
         'transfer_id' => 123,
         'amount' => 500,
-    ]);
+    ];
+
+    $repository->expects($this->once())
+        ->method('findOne')
+        ->with(['transfer_id' => 123])
+        ->willReturn($transfer);
 
     $service = new TransferService($repository);
 
     $result = $service->getTransfer(123);
 
-    expect($result)->toBe([
-        'id' => 1,
-        'transfer_id' => 123,
-        'amount' => 500,
-    ]);
+    expect($result)->toBe($transfer);
 });
 
